@@ -1,0 +1,21 @@
+$layout-breakpoint-400px: 400px
+.flex-container
+  display: flex
+  flex-wrap: wrap
+  justify-content: space-around
+
+.search-form
+  margin: 20px auto
+  width: 350px
+
+.option-name
+  font-style: italic
+
+.option-icon
+  float: right
+
+@media (max-width: $layout-breakpoint-400px)
+  .search-form
+    width: 200px
+  .option-name
+    display: none

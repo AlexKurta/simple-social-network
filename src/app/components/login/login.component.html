@@ -1,0 +1,28 @@
+<mat-card class="login-card">
+  <h1 class="text-header">
+    <span class="text-header-span">{{'Social network' | translate}}</span> {{'LOGIN' | translate}}
+  </h1>
+
+  <mat-card-content>
+    <form novalidate #form='ngForm' >
+
+      <mat-form-field class="form-item">
+        <input matInput type="text" placeholder="{{'Email' |translate}}" [(ngModel)]="email" #emailEl="ngModel" name="email" required email>
+        <mat-error *ngIf="emailEl.invalid">{{getEmailErrorMessage()}}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-item">
+        <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="{{'Password' | translate}}" [(ngModel)]="password" #passwordEl="ngModel" name="password" required>
+        <mat-error *ngIf="passwordEl.invalid">{{'Password cannot has empty value' | translate}}</mat-error>
+        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+
+    </form>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="onSubmit()">{{'Login' | translate}}</button>
+  </mat-card-actions>
+</mat-card>

@@ -1,0 +1,10 @@
+<mat-toolbar class="footer">
+  <div class="container">
+    <mat-form-field class="language-select">
+      <mat-label>{{'Languages' | translate}}:</mat-label>
+      <mat-select value="en" (selectionChange)="changeLanguage($event)">
+        <mat-option *ngFor="let lang of translate.getLangs()" [value]="lang">{{lang}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</mat-toolbar>

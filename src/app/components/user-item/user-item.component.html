@@ -1,0 +1,23 @@
+<mat-card class="card">
+
+  <mat-card-header>
+    <mat-card-title>{{user.username}}</mat-card-title>
+    <mat-card-subtitle>{{'Nickname' | translate}}</mat-card-subtitle>
+  </mat-card-header>
+
+  <img mat-card-image class="card-image" [src]="user.photo" *ngIf="user.photo">
+
+  <mat-card-content>
+    <mat-card-title>{{user.name}}</mat-card-title>
+    <mat-card-subtitle>{{'User name' | translate}}</mat-card-subtitle>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-button color="primary" (click)="showDetails()">{{'Details' | translate}}</button>
+    <button mat-button color="warn" (click)="openDialog()" *ngIf="isAdmin">{{'Delete' | translate}}</button>
+  </mat-card-actions>
+
+  <fa-icon [icon]="faGlobeAmericas" class="card-icon" appOnline userId="{{user.id}}" matTooltip="{{getOnlineStatus()}}"></fa-icon>
+</mat-card>
+
+

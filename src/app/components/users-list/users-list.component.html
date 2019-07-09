@@ -1,0 +1,24 @@
+<div class="search-form">
+  <form>
+    <mat-form-field class="search-form">
+      <input type="text" placeholder="{{'Type to start search' | translate}}" matInput [formControl]="searchControl" [matAutocomplete]="auto">
+      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+        <mat-option *ngFor="let user of filteredUsers " [value]="user.name">
+          <span>{{user.username}}</span>
+          <small class="option-name"> | {{user.name}}</small>
+          <fa-icon [icon]="faGlobeAmericas" appOnline userId="{{user.id}}" class="option-icon" matTooltip="{{getOnlineStatus(user.online)}}"></fa-icon>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+</div>
+
+<div class="flex-container">
+  <app-user-item
+    *ngFor="let item of filteredUsers || users; trackBy: trackByFn"
+    [user]="item"
+    (showDetailsEvent)="showDetails($event)"
+  ></app-user-item>
+</div>
+
+

@@ -1,0 +1,24 @@
+<!-- Main content -->
+<mat-toolbar class="toolbar">
+  <div class="container">
+    <a class="toolbar-a" routerLink="/users">{{'Social network' | translate}}</a>
+    <a class="toolbar-a toolbar-link main-view" routerLink="/users" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" *ngIf="isLogin">{{'Users' | translate}}</a>
+    <a class="toolbar-a toolbar-link main-view" routerLink="/create" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" *ngIf="isAdmin">{{'Create user' | translate}}</a>
+    <span class="toolbar-text main-view" *ngIf="isLogin">{{user.name}}</span>
+    <button mat-icon-button [matMenuTriggerFor]="menu" class="mobile-view button-position" *ngIf="isLogin">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <button mat-stroked-button color="warn" *ngIf="isLogin" (click)="logout()">{{'Logout' | translate}}</button>
+    <a mat-stroked-button class="toolbar-a toolbar-btn" routerLink="/login" *ngIf="!isLogin">{{'Login' | translate}}</a>
+  </div>
+</mat-toolbar>
+
+<!-- Icon menu -->
+<mat-menu #menu="matMenu">
+  <a mat-menu-item routerLink="/users">
+    <span>{{'Users' | translate}}</span>
+  </a>
+  <a mat-menu-item routerLink="/create" *ngIf="isAdmin">
+    <span>{{'Create user' | translate}}</span>
+  </a>
+</mat-menu>

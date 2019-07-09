@@ -1,0 +1,14 @@
+<app-header></app-header>
+
+<div class="content-container">
+  <div class="width-wrapper">
+    <div *ngIf="isLoading" class="spinner-container">
+      <mat-spinner class="spinner"></mat-spinner>
+    </div>
+    <div [hidden]="isLoading" class="content-container">
+      <router-outlet ></router-outlet>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

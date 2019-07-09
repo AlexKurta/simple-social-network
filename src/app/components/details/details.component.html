@@ -1,0 +1,38 @@
+<mat-card class="details-card">
+  <mat-card-header>
+    <h1>{{'User details' |translate}}</h1>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-list role="list">
+      <mat-list-item role="listitem">
+        <h2>{{'User name' | translate}}: <span class="detail-text">{{user?.name}}</span></h2>
+      </mat-list-item>
+
+      <div class="img-wrapper">
+        <img [src]="user?.photo" *ngIf="user?.photo" class="details-img">
+      </div>
+
+      <mat-list-item role="listitem">
+        <h2>{{'User nickname' | translate}}: <span class="detail-text">{{user?.username}}</span></h2>
+      </mat-list-item>
+      <mat-list-item role="listitem">
+        <h3>{{'Email' | translate}}: <span class="detail-text">{{user?.email}}</span></h3>
+      </mat-list-item>
+      <mat-list-item role="listitem">
+        <h3>{{'Address' | translate}}: <span class="detail-text">{{user?.city}}</span></h3>
+      </mat-list-item>
+      <mat-list-item role="listitem">
+        <h4>{{'Phones' | translate}}:</h4>
+      </mat-list-item>
+      <mat-list-item role="listitem" *ngFor="let item of user?.phone">
+        <span class="detail-phone">{{item | phones}}</span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+
+  <mat-card-actions *ngIf="isAdmin">
+    <button mat-stroked-button class="edit-btn" (click)="editUser()">{{'Edit User' | translate}}</button>
+    <button mat-stroked-button color="warn" (click)="openDialog()">{{'Delete User' | translate}}</button>
+  </mat-card-actions>
+</mat-card>

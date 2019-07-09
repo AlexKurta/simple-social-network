@@ -1,0 +1,42 @@
+$font-size-1: 1.3em
+$font-size-2: 1em
+$font-size-3: 0.7em
+$layout-breakpoint-540px: 540px
+$layout-breakpoint-400px: 400px
+
+.detail-text
+  font-weight: bold
+  font-style: italic
+  font-size: $font-size-1
+
+.detail-phone
+  font-size: $font-size-1
+
+.details-card
+  margin: 50px
+
+.edit-btn
+  color: green
+  margin-right: 10px
+
+.details-img
+  width: 100%
+
+.img-wrapper
+  margin: 15px 0
+
+@media (max-width: $layout-breakpoint-540px)
+  .detail-text
+    font-size: $font-size-2
+  .detail-phone
+    font-size: $font-size-2
+  .details-card
+    margin: 20px
+
+@media (max-width: $layout-breakpoint-400px)
+  .detail-text
+    font-size: $font-size-3
+  .detail-phone
+    font-size: $font-size-3
+  .details-card
+    margin: 10px

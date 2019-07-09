@@ -1,0 +1,80 @@
+<mat-card class="create-edit-card">
+  <h1 class="text-header">
+    <span class="text-header-span" *ngIf="isEditPage">{{'Edit User' | translate}}:</span> {{user?.name}}
+    <span class="text-header-span" *ngIf="!isEditPage">{{'Create User' | translate}}</span>
+  </h1>
+
+  <mat-card-content>
+    <form [formGroup]="form" *ngIf="user || !isEditPage" novalidate>
+
+      <!-- User name field -->
+      <mat-form-field class="form-item">
+        <mat-label>{{'Name' | translate}}</mat-label>
+        <input matInput type="text" name="name" formControlName="name" placeholder="{{'Enter user name' | translate}}" required>
+        <mat-error *ngIf="name.invalid">{{getErrorMessage('Name' | translate)}}</mat-error>
+      </mat-form-field>
+
+      <!-- User nickname field -->
+      <mat-form-field class="form-item">
+        <mat-label>{{'Nickname' | translate}}</mat-label>
+        <input matInput type="text" name="username" formControlName="username" placeholder="{{'Enter user nickname' | translate}}" required>
+        <mat-error *ngIf="nickname.invalid">{{getErrorMessage('Nickname' | translate)}}</mat-error>
+      </mat-form-field>
+
+      <!-- User email field -->
+      <mat-form-field class="form-item">
+        <mat-label>{{'Email' | translate}}</mat-label>
+        <input matInput type="email" name="email" formControlName="email" placeholder="{{'Enter user email' | translate}}" required>
+        <mat-error *ngIf="email.invalid">{{getEmailErrorMessage()}}</mat-error>
+      </mat-form-field>
+
+      <!-- User password field -->
+      <mat-form-field class="form-item">
+        <mat-label>{{'Password' | translate}}</mat-label>
+        <input matInput [type]="hidePassword ? 'password' : 'text'" name="password" formControlName="password" placeholder="{{'Enter user password' | translate}}" required>
+        <mat-error *ngIf="password.invalid">{{getErrorMessage('Password' | translate)}}</mat-error>
+        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- User address field -->
+      <mat-form-field class="form-item">
+        <mat-label>{{'Address' | translate}}</mat-label>
+        <input matInput type="text" name="city" formControlName="city" placeholder="{{'Enter user address (city)' | translate}}" required>
+        <mat-error *ngIf="address.invalid">{{getErrorMessage('Address' | translate)}}</mat-error>
+      </mat-form-field>
+
+      <!-- User phone field -->
+      <div formArrayName="phone">
+        <mat-label class="create-edit-label">{{'Phones' | translate}}:</mat-label>
+        <button mat-button color="primary" (click)="addPhone()" [disabled]="phone.invalid">{{'Add phone' | translate}}</button>
+        <mat-list role="list">
+          <mat-list-item role="listitem" *ngFor="let item of phone.controls; index as i">
+            <mat-form-field class="form-item-phone">
+              <mat-label>{{'Phone' | translate}}</mat-label>
+              <input matInput type="text" prefix="+" mask="(000) 00-00-00-00" [formControlName]="i" placeholder="{{'Enter user phone' | translate}}" required>
+              <mat-error *ngIf="phone.controls[i].invalid">{{getPhoneErrorMessage(i)}}</mat-error>
+            </mat-form-field>
+            <button mat-button color="warn" (click)="deletePhone(i)" *ngIf="i > 0">{{'Delete phone' |translate}}</button>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </form>
+
+    <!-- User photo field -->
+    <div class="add-photo">
+      <input type="file" name="photo" accept="image/*" id="photo" class="custom-file-input" (change)="addPhoto($event)" #inputElement>
+      <button mat-button color="warn" (click)="deletePhoto()" *ngIf="imageUrl">{{'Delete photo' | translate}}</button>
+    </div>
+
+    <!-- Image preview -->
+    <img [src]="imageUrl" *ngIf="imageUrl" class="upload-image">
+  </mat-card-content>
+
+  <!-- Buttons -->
+  <mat-card-actions>
+    <button mat-flat-button color="primary" [disabled]="form.invalid || !!form.errors" (click)="onSubmit()">{{'Save' | translate}}</button>
+    <mat-error *ngIf="form.errors" class="submit-error">{{getUniqueErrorMessage()}}</mat-error>
+  </mat-card-actions>
+</mat-card>

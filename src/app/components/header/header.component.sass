@@ -1,0 +1,47 @@
+$layout-breakpoint-small: 600px
+
+.mobile-view
+  display: none !important
+
+@media (max-width: $layout-breakpoint-small)
+  .mobile-view
+    display: block !important
+
+  .main-view
+    display: none !important
+
+.container
+  max-width: 1200px
+  width: 100%
+  margin: 0 auto
+  display: flex
+
+.toolbar-a
+  text-decoration: none
+  color: white
+
+.toolbar-link
+  margin-left: 30px
+  font-size: 0.8em
+  font-weight: lighter
+  color: #aeb6bd
+
+.active
+  font-weight: normal
+  color: white
+
+.toolbar-text
+  font-size: 0.9em
+  margin: 0 30px 0 auto
+
+.toolbar-btn
+  margin-left: auto
+
+.toolbar
+  position: fixed
+  top: 0
+  z-index: 1000
+  background: #505280
+
+.button-position
+  margin-left: auto
