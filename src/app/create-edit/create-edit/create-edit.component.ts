@@ -8,6 +8,7 @@ import { CheckUniquenessValidator } from '../../validators/check-uniqueness';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 const FILE_SIZE_LIMIT = 2500000;
 
@@ -22,6 +23,7 @@ export class CreateEditComponent implements OnInit, OnDestroy {
   public hidePassword = true;
   public imageUrl: string;
   @ViewChild('inputElement') inputElement: ElementRef;
+  private subscription: Subscription = new Subscription();
 
   public form: FormGroup = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -53,18 +55,19 @@ export class CreateEditComponent implements OnInit, OnDestroy {
     this.isEditPage = !!this.activatedRoute.snapshot.params.id;
     if (this.isEditPage) {
       this.dataService.editUserId = this.activatedRoute.snapshot.params.id;
-      this.dataService.getUserById(this.dataService.editUserId).subscribe((user: User) => {
+      this.subscription.add(this.dataService.getUserById(this.dataService.editUserId).subscribe((user: User) => {
         this.user = user;
         this.imageUrl = user.photo ? user.photo : '';
         for (let i = 0; i < user.phone.length - 1; i++) {
           this.addPhone();
         }
         this.form.patchValue(this.user);
-      }, (error: HttpErrorResponse) => this.onError(error));
+      }, this.onError));
     }
   }
 
   ngOnDestroy(): void {
+    this.subscription.unsubscribe();
     if (this.isEditPage) {
       this.dataService.editUserId = '';
     }
@@ -129,13 +132,13 @@ export class CreateEditComponent implements OnInit, OnDestroy {
         this.router.navigate(['/users']);
         this.toastr.success(`${this.translate.instant('User')}: ${user.username} ${this.translate.instant('was successfully updated')}`);
         this.dataService.emitUpdateUserEvent(user);
-      }, (error: HttpErrorResponse) => this.onError(error));
+      }, this.onError);
     } else {
       // Create user
       this.dataService.createUser({id: this.idService.getNewId(), ...this.form.value, photo: this.imageUrl}).subscribe((user: User) => {
         this.router.navigate([`/users/${user.id}`]);
         this.toastr.success(`${this.translate.instant('User')}: ${user.username} ${this.translate.instant('was successfully created')}`);
-      }, (error: HttpErrorResponse) => this.onError(error));
+      }, this.onError);
     }
   }
 
@@ -167,7 +170,10 @@ export class CreateEditComponent implements OnInit, OnDestroy {
     this.inputElement.nativeElement.value = null;
   }
 
-  private onError(error: HttpErrorResponse): void {
+  private onError = (error: HttpErrorResponse) => {
     this.toastr.error(error.message, error.statusText);
+    if (error.status === 404) {
+      this.router.navigate(['**'])
+    }
   }
 }

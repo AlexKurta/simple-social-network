@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User } from '../../models/User';
 import { DataService } from '../../services/data.service';
 import { Router } from '@angular/router';
@@ -8,17 +8,19 @@ import { faGlobeAmericas } from '@fortawesome/free-solid-svg-icons';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.sass']
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent implements OnInit, OnDestroy {
   public users: User[];
   public searchControl = new FormControl();
   public filteredUsers: User[];
   public faGlobeAmericas = faGlobeAmericas;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private dataService: DataService,
@@ -33,14 +35,12 @@ export class UsersListComponent implements OnInit {
     this.fetchUsers();
 
     // subscribe on delete user event
-    this.dataService.deleteUserSubscriber.subscribe((data: object) => {
-      if (data) {
-        this.fetchUsers();
-      }
-    }, (error: HttpErrorResponse) => this.onError(error));
+    this.subscription.add(this.dataService.deleteUserSource$.subscribe((data: object) => {
+      this.fetchUsers();
+    }, this.onError));
 
     // filter users by search value
-    this.searchControl.valueChanges.pipe(debounceTime(500)).subscribe((value: User | string) => {
+    this.subscription.add(this.searchControl.valueChanges.pipe(debounceTime(500)).subscribe((value: User | string) => {
       if (typeof value === 'string') {
         const searchValue = value.toLowerCase();
         this.filteredUsers = this.users.filter((user: User) => {
@@ -49,7 +49,11 @@ export class UsersListComponent implements OnInit {
       } else {
         this.filteredUsers = [value];
       }
-    }, (error: HttpErrorResponse) => this.onError(error));
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   public trackByFn(index: number): number {
@@ -64,7 +68,7 @@ export class UsersListComponent implements OnInit {
     this.dataService.getAllUsers().subscribe((data: User[]) => {
       this.users = data;
       this.filteredUsers = data;
-    }, (error: HttpErrorResponse) => this.onError(error));
+    }, this.onError);
   }
 
   public getOnlineStatus(status: boolean): string {
@@ -72,7 +76,10 @@ export class UsersListComponent implements OnInit {
     return this.translate.instant(hint);
   }
 
-  private onError(error: HttpErrorResponse): void {
+  private onError = (error: HttpErrorResponse) => {
     this.toastr.error(error.message, error.statusText);
+    if (error.status === 404) {
+      this.router.navigate(['**'])
+    }
   }
 }

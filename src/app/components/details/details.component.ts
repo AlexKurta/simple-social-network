@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { AuthService } from '../../services/auth.service';
@@ -8,16 +8,18 @@ import { DialogComponent } from '../dialog/dialog.component';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.sass']
 })
-export class DetailsComponent implements OnInit {
+export class DetailsComponent implements OnInit, OnDestroy {
   private userId: string;
   public user: User;
   public isAdmin = false;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private dataService: DataService,
@@ -32,9 +34,13 @@ export class DetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = this.activatedRoute.snapshot.params.id;
-    this.dataService.getUserById(this.userId).subscribe((user: User) => this.user = user,
-      (error: HttpErrorResponse) => this.onError(error));
-    this.isAdmin = this.authService.getAuthUser().role === 'admin';
+    this.subscription.add(this.dataService.getUserById(this.userId).subscribe((user: User) => this.user = user,
+      (error: HttpErrorResponse) => this.onError(error)));
+    this.isAdmin = this.authService.isAdmin();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   public editUser(): void {
@@ -46,7 +52,7 @@ export class DetailsComponent implements OnInit {
       this.dataService.emitDeleteUserEvent(data);
       this.router.navigate([`/users`]);
       this.toastr.info(`${this.user.username} ${this.translate.instant('was successfully deleted')}`);
-    }, (error: HttpErrorResponse) => this.onError(error));
+    }, this.onError);
   }
 
   public openDialog(): void {
@@ -58,7 +64,10 @@ export class DetailsComponent implements OnInit {
     });
   }
 
-  private onError(error: HttpErrorResponse): void {
+  private onError = (error: HttpErrorResponse) => {
     this.toastr.error(error.message, error.statusText);
+    if (error.status === 404) {
+      this.router.navigate(['**'])
+    }
   }
 }

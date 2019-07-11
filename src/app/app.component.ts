@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {LoaderService} from './services/loader.service';
-import {delay} from 'rxjs/operators';
-import {TranslateService} from '@ngx-translate/core';
+import { Component, OnInit } from '@angular/core';
+import { LoaderService } from './services/loader.service';
+import { delay } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loaderService.loadingSubscriber.pipe(delay(0)).subscribe(data => {
+    this.loaderService.isLoading$.pipe(delay(0)).subscribe(data => {
       this.isLoading = data;
     });
   }

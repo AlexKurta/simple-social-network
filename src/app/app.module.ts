@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { AppRoutingModule } from './app-routing.module';
+import { AppRoutingModule } from './routes/app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CustomMaterialModule } from './custom-material-module/custom-material.module';
 import { ToastrModule } from 'ngx-toastr';

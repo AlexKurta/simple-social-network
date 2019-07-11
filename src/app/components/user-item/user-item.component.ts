@@ -30,7 +30,7 @@ export class UserItemComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isAdmin = this.authService.getAuthUser().role === 'admin';
+    this.isAdmin = this.authService.isAdmin();
   }
 
   public showDetails(): void {
@@ -41,7 +41,7 @@ export class UserItemComponent implements OnInit {
     this.dataService.deleteUser(this.user.id).subscribe((data: object) => {
       this.dataService.emitDeleteUserEvent(data);
       this.toastr.info(`${this.user.username} ${this.translate.instant('was successfully deleted')}`);
-    }, (error: HttpErrorResponse) => this.onError(error));
+    }, this.onError);
   }
 
   public openDialog(): void {
@@ -58,7 +58,7 @@ export class UserItemComponent implements OnInit {
     return this.translate.instant(status);
   }
 
-  private onError(error: HttpErrorResponse): void {
+  private onError = (error: HttpErrorResponse) => {
     this.toastr.error(error.message, error.statusText);
   }
 }

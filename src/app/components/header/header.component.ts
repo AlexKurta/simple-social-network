@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { User } from '../../models/User';
 import { DataService } from '../../services/data.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.sass']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   public isLogin = false;
   public isAdmin = false;
   public user: User;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private authService: AuthService,
@@ -23,23 +25,23 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     // subscribe on login event
-    this.authService.loginSubscriber.subscribe((user: User) => {
-      if (user.name) {
-        this.isLogin = true;
-        this.user = user;
-        this.isAdmin = this.authService.getAuthUser().role === 'admin';
-      }
-    });
+    this.subscription.add(this.authService.loginSource$.subscribe((user: User) => {
+      this.onLoginSubscribe(user);
+    }));
     // subscribe on update user event
-    this.dataService.updateUserSubscriber.subscribe((user: User) => {
-      if (user.id && user.id === this.user.id) {
+    this.subscription.add(this.dataService.updateUserSource$.subscribe((user: User) => {
+      if (user.id === this.user.id) {
         this.user = user;
       }
-    });
+    }));
     // set default props
-    this.isAdmin = this.authService.getAuthUser().role === 'admin';
+    this.isAdmin = this.authService.isAdmin();
     this.isLogin = this.authService.checkAuth();
     this.user = this.authService.getAuthUser();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   public logout(): void {
@@ -48,5 +50,11 @@ export class HeaderComponent implements OnInit {
     this.isAdmin = false;
     this.user = this.authService.emptyValue;
     this.router.navigate(['/login']);
+  }
+
+  private onLoginSubscribe(user: User): void {
+    this.isLogin = true;
+    this.user = user;
+    this.isAdmin = this.authService.isAdmin();
   }
 }

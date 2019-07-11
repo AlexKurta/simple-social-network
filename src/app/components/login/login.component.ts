@@ -14,8 +14,10 @@ export class LoginComponent {
   public email: string;
   public password: string;
   public hidePassword = true;
-  @ViewChild('form') form;
-  @ViewChild('emailEl') emailEl;
+  @ViewChild('form')
+  form;
+  @ViewChild('emailEl')
+  emailEl;
 
   constructor(
     private authService: AuthService,

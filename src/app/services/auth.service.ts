@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from '../models/User';
 import { Observable } from 'rxjs';
-import { BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
@@ -27,8 +27,8 @@ export class AuthService {
     online: false
   };
 
-  private loginSource = new BehaviorSubject<User>(this.emptyValue);
-  public loginSubscriber = this.loginSource.asObservable();
+  private loginSource = new Subject<User>();
+  public loginSource$ = this.loginSource.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -85,5 +85,9 @@ export class AuthService {
 
   private setOnlineStatus(id: string, status: boolean): Observable<User> {
     return this.http.patch<User>(`${BASE_URL}/${id}`, JSON.stringify({online: status}), HTTP_OPTIONS);
+  }
+
+  public isAdmin(): boolean {
+    return this.getAuthUser().role === 'admin';
   }
 }

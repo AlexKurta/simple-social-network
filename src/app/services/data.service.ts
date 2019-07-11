@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from '../models/User';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 const BASE_URL = 'http://localhost:3000/users';
 const HTTP_OPTIONS = {
@@ -14,24 +14,13 @@ const HTTP_OPTIONS = {
 export class DataService {
   public editUserId: string;
 
-  private emptyUser: User = {
-    id: '',
-    name: '',
-    username: '',
-    email: '',
-    password: '',
-    city: '',
-    phone: [''],
-    role: '',
-    online: false
-  };
   // Delete user event
-  private deleteUserSource = new BehaviorSubject(null);
-  public deleteUserSubscriber = this.deleteUserSource.asObservable();
+  private deleteUserSource = new Subject();
+  public deleteUserSource$ = this.deleteUserSource.asObservable();
 
   // Edit user event
-  private updateUserSource = new BehaviorSubject(this.emptyUser);
-  public updateUserSubscriber = this.updateUserSource.asObservable();
+  private updateUserSource = new Subject<User>();
+  public updateUserSource$ = this.updateUserSource.asObservable();
 
   constructor(private http: HttpClient) {
   }
